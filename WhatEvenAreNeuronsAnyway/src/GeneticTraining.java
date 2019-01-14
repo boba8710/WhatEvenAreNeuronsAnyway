@@ -92,7 +92,7 @@ public class GeneticTraining {
 	 */
 	private static void mutatePopulation(NeuralNetwork[] population,int neuronsPerHiddenLayer, double mutationChance, int preserveTopNIndividuals){
 		Random r = new Random();
-		int i = 1;
+		int i = 0;
 		for(NeuralNetwork network : population){
 			if(i>preserveTopNIndividuals){
 				
@@ -116,6 +116,13 @@ public class GeneticTraining {
 			i++;
 		}
 	}
+	/**
+	 * Generates the 'child' of two neural networks. In the case of fine crossbreeding granularity, each weight of each neuron of each parent has a 50% chance of 
+	 * being expressed in the child network. In coarse crossbreeding granularity, each neuron in each parent network has a 50% chance of being expressed in the child.
+	 * @param individualA
+	 * @param individualB
+	 * @return the child NeuralNetwork of individualA and individualB
+	 */
 	private static NeuralNetwork crossbreedIndividuals(NeuralNetwork individualA, NeuralNetwork individualB){
 		ArrayList<ArrayList<Neuron>> hiddenLayersA = individualA.getHiddenLayers();
 		ArrayList<ArrayList<Neuron>> hiddenLayersB = individualB.getHiddenLayers();
@@ -157,6 +164,27 @@ public class GeneticTraining {
 		scorePopulation(testingInputArray, testingOutputArray, inputCount, outputCount, population);
 		sortPopulation(population);
 		mutatePopulation(population, neuronsPerHiddenLayer, mutationChance, preserveTopNIndividuals);
+		NeuralNetwork[] newPopulation = new NeuralNetwork[population.length];
+		
+		for(int i = 0; i < population.length*populationDieOffPercent; i++) { //Cull the weaker individuals
+			newPopulation[i]=population[i];
+		}
+		
+		int individualIterator = (int) (population.length*populationDieOffPercent);
+		int offset = 1; 
+		int populationIterator = 0;
+		while(individualIterator<populationSize) {
+			if(populationIterator==population.length*populationDieOffPercent) {
+				offset++;
+				individualIterator=0;
+			}
+			newPopulation[individualIterator] = crossbreedIndividuals(population[populationIterator], population[(populationIterator+offset)%population.length]);
+			populationIterator++;
+			individualIterator++;
+		}
+		for(int i = 0; i < population.length; i++) {
+			population[i] = newPopulation[i];
+		}
 		
 		
 	}
