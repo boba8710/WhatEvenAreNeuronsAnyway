@@ -1,32 +1,42 @@
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 public class MainClass {
 	public static void main(String[] args){
-		NeuralNetwork neuralNetwork = new NeuralNetwork(10, 2);
-		try {
-			neuralNetwork.addHiddenLayer(1000);
-			neuralNetwork.addHiddenLayer(1000);
-			neuralNetwork.createInputWeb();
-		} catch (InputWebException e) {
-			e.printStackTrace();
+		int imageWidth = 1280;
+		int imageHeight = 720;
+		int entryNeurons = imageWidth*imageHeight;
+		int exitNeurons  = imageWidth*imageHeight;
+		int totalHiddenLayers = 6;
+		int neuronsPerHiddenLayer = 1000;
+		int annotatedDatasetSize = 75;
+		double[][] scoringInput = new double[annotatedDatasetSize][entryNeurons];
+		double[][] scoringOutput = new double[annotatedDatasetSize][exitNeurons];
+		for(int i = 0; i < annotatedDatasetSize; i++){
+			System.out.println("Reading from image: "+i);
+			BufferedImage inputImg = null;
+			BufferedImage resultImg = null;
+			try {
+				inputImg = ImageIO.read(new File("C:\\Users\\Zaine\\Desktop\\COMP SCI\\DataSets\\8 bit blackwhite classified\\image_"+i+".jpg"));
+				resultImg = ImageIO.read(new File("C:\\Users\\Zaine\\Desktop\\COMP SCI\\DataSets\\8 bit blackwhite classified\\image_"+i+"_result.jpg"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			int neuronIterator = 0;
+			for(int x = 0; x < imageWidth;x++){
+				for(int y = 0; y < imageHeight;y++){
+					scoringInput[i][neuronIterator]=((inputImg.getRGB(x,y)&0xFF)/255)*2-1;
+					scoringOutput[i][neuronIterator]=((resultImg.getRGB(x,y)&0xFF)/86)*2-1;
+					neuronIterator++;
+				}
+			}
 		}
-		neuralNetwork.randomizeAllHiddenLayerBiases();
-		neuralNetwork.randomizeAllHiddenLayerWeights();
-		
-		Random r = new Random();
-		double[] startingValues = new double[10];
-		for(int i = 0; i < startingValues.length; i++){
-			startingValues[i]=(r.nextDouble()>0.5 ? 1:-1)*r.nextDouble();
-		}
-		neuralNetwork.initializeInputLayer(startingValues);
-		neuralNetwork.computeOutput();
-		Object[] output = neuralNetwork.getOutputLayer().toArray();
-		for(Object o : output){
-			Neuron n = (Neuron)o;
-			System.out.println(n.getOutput());
-
-		}
-					
-											
+		GeneticTraining gt = new GeneticTraining(1, 0.75, 0.5, 2, entryNeurons, exitNeurons, totalHiddenLayers, neuronsPerHiddenLayer);
 	}
 }

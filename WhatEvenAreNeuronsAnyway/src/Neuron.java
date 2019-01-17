@@ -1,7 +1,8 @@
 import java.util.Random;
 import java.lang.Math;
 public class Neuron {
-	private double[] inputs;
+	private double[] inputs; //Storing inputs in each neuron is just not supportable. Way too much memory used. Needs to get needed
+							 //input values at runtime. THIS MUST BE FIXED.
 	private double[] weights;
 	private boolean outputComputedForSettings = false;
 	private double output;
