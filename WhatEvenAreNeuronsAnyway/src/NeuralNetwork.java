@@ -56,12 +56,11 @@ public class NeuralNetwork {
 			}
 		}
 		//Set the number of inputs for the output layer neurons to the number of neurons in the last hidden layer
-		//TODO:What the hell is going on here?!
-		int i = 0;
 		for(Neuron n : outputLayer){
 			n.setInputCount(hiddenLayers.get(hiddenLayers.size()-1).size()); 
-			n.setSingleWeight(i, 1);
-			i++;
+			for(double weight : n.getWeights()){
+				weight = 1;
+			}
 		}
 		if(Globals.DEBUG){
 			System.out.println("[d] Finished creation of input web");

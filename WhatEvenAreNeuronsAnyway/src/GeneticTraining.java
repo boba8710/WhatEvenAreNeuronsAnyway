@@ -10,8 +10,17 @@ public class GeneticTraining {
 	private int hiddenLayerCount; 
 	private int neuronsPerHiddenLayer;
 	private NeuralNetwork[] population;
-	private static void createInitialPopulation(NeuralNetwork[] population, int populationSize, int inputCount, int outputCount ,int hiddenLayerCount, int neuronsPerHiddenLayer){
-		population = new NeuralNetwork[populationSize];
+	public GeneticTraining(int populationSize, double mutationChance, double populationDieOffPercent, int preserveTopNIndividuals, int inputCount, int outputCount ,int hiddenLayerCount, int neuronsPerHiddenLayer){
+		this.mutationChance = mutationChance;
+		this.populationDieOffPercent=populationDieOffPercent;
+		this.populationSize=populationSize;
+		assert (1/populationDieOffPercent)%populationSize==0;
+		this.preserveTopNIndividuals=preserveTopNIndividuals;
+		this.inputCount = inputCount;
+		this.outputCount=outputCount;
+		this.hiddenLayerCount = hiddenLayerCount;
+		this.neuronsPerHiddenLayer = neuronsPerHiddenLayer;
+		this.population = new NeuralNetwork[populationSize];
 		for(NeuralNetwork nN : population){
 			nN = new NeuralNetwork(inputCount, outputCount);
 			for(int i=0; i < hiddenLayerCount;i++){
@@ -29,18 +38,6 @@ public class GeneticTraining {
 			nN.randomizeAllHiddenLayerBiases();
 			nN.randomizeAllHiddenLayerWeights();
 		}
-	}
-	public GeneticTraining(int populationSize, double mutationChance, double populationDieOffPercent, int preserveTopNIndividuals, int inputCount, int outputCount ,int hiddenLayerCount, int neuronsPerHiddenLayer){
-		this.mutationChance = mutationChance;
-		this.populationDieOffPercent=populationDieOffPercent;
-		this.populationSize=populationSize;
-		assert (1/populationDieOffPercent)%populationSize==0;
-		this.preserveTopNIndividuals=preserveTopNIndividuals;
-		this.inputCount = inputCount;
-		this.outputCount=outputCount;
-		this.hiddenLayerCount = hiddenLayerCount;
-		this.neuronsPerHiddenLayer = neuronsPerHiddenLayer;
-		createInitialPopulation(this.population, populationSize, inputCount, outputCount, hiddenLayerCount,neuronsPerHiddenLayer);
 	}
 	/**
 	 * Scores the population. The result will be that all networks in the population
@@ -95,7 +92,6 @@ public class GeneticTraining {
 		int i = 0;
 		for(NeuralNetwork network : population){
 			if(i>preserveTopNIndividuals){
-				
 				ArrayList<ArrayList<Neuron>> hiddenLayers = network.getHiddenLayers();
 				for(ArrayList<Neuron> hiddenLayer : hiddenLayers){
 					int totalWeights = hiddenLayer.get(0).getWeightCount();
@@ -160,6 +156,8 @@ public class GeneticTraining {
 		}
 		return childNetwork;
 	}
+	//TODO: Why are these static? Can I just move there code into this method (at the cost of readability)?
+	//		How about I change them to private void methods? Why not?
 	public void runGeneration(double[][] testingInputArray, double[][] testingOutputArray){
 		scorePopulation(testingInputArray, testingOutputArray, inputCount, outputCount, population);
 		sortPopulation(population);

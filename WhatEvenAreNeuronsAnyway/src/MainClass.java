@@ -13,8 +13,8 @@ public class MainClass {
 		int imageHeight = 720;
 		int entryNeurons = imageWidth*imageHeight;
 		int exitNeurons  = imageWidth*imageHeight;
-		int totalHiddenLayers = 6;
-		int neuronsPerHiddenLayer = 1000;
+		int totalHiddenLayers = 1000;
+		int neuronsPerHiddenLayer = 6;
 		int annotatedDatasetSize = 75;
 		double[][] scoringInput = new double[annotatedDatasetSize][entryNeurons];
 		double[][] scoringOutput = new double[annotatedDatasetSize][exitNeurons];
@@ -37,6 +37,7 @@ public class MainClass {
 				}
 			}
 		}
-		GeneticTraining gt = new GeneticTraining(1, 0.75, 0.5, 2, entryNeurons, exitNeurons, totalHiddenLayers, neuronsPerHiddenLayer);
+		GeneticTraining gt = new GeneticTraining(50, 0.75, 0.5, 2, entryNeurons, exitNeurons, totalHiddenLayers, neuronsPerHiddenLayer);
+		gt.runGeneration(scoringInput, scoringOutput);
 	}
 }

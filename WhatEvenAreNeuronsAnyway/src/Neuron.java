@@ -85,4 +85,7 @@ public class Neuron {
 	public int getWeightCount(){
 		return weights.length;
 	}
+	public double[] getWeights(){
+		return this.weights;
+	}
 }
