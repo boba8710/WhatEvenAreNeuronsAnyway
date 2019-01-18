@@ -98,7 +98,7 @@ public class GeneticTraining {
 				
 				ArrayList<ArrayList<Neuron>> hiddenLayers = network.getHiddenLayers();
 				for(ArrayList<Neuron> hiddenLayer : hiddenLayers){
-					int totalWeights = hiddenLayer.get(0).getInputCount();
+					int totalWeights = hiddenLayer.get(0).getWeightCount();
 					for(Neuron n : hiddenLayer){
 						for(int j = 0; j<totalWeights;j++){
 							double randDouble = r.nextDouble();
@@ -133,8 +133,8 @@ public class GeneticTraining {
 			for(int i = 0; i< hiddenLayersA.size(); i++){//layers
 				for(int j = 0; j<hiddenLayersA.get(0).size();j++){//neurons
 					Neuron childNeuron = hiddenLayersA.get(i).get(j);
-					childNeuron.setInputCount(hiddenLayersA.get(i).get(j).getInputCount());
-					for(int k = 0; k<hiddenLayersA.get(0).get(0).getInputCount(); k++){//weights
+					childNeuron.setInputCount(hiddenLayersA.get(i).get(j).getWeightCount());
+					for(int k = 0; k<hiddenLayersA.get(0).get(0).getWeightCount(); k++){//weights
 						if(r.nextBoolean()){
 							childNeuron.setSingleWeight(k, hiddenLayersA.get(i).get(j).getSingleWeight(k));
 						}else{
@@ -148,7 +148,7 @@ public class GeneticTraining {
 			for(int i = 0; i< hiddenLayersA.size(); i++){//layers
 				for(int j = 0; j<hiddenLayersA.get(0).size();j++){//neurons
 					Neuron childNeuron = hiddenLayersA.get(i).get(j);
-					childNeuron.setInputCount(hiddenLayersA.get(i).get(j).getInputCount());
+					childNeuron.setInputCount(hiddenLayersA.get(i).get(j).getWeightCount());
 					if(r.nextBoolean()){
 						childNetwork.setNeuron(i, j, hiddenLayersA.get(i).get(j));
 					}else{

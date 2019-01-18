@@ -56,6 +56,7 @@ public class NeuralNetwork {
 			}
 		}
 		//Set the number of inputs for the output layer neurons to the number of neurons in the last hidden layer
+		//TODO:What the hell is going on here?!
 		int i = 0;
 		for(Neuron n : outputLayer){
 			n.setInputCount(hiddenLayers.get(hiddenLayers.size()-1).size()); 
@@ -88,6 +89,32 @@ public class NeuralNetwork {
 		}
 		if(Globals.DEBUG){
 			System.out.println("[d] Hidden layer added");
+		}
+	}
+	public void computeOutput(){
+		ArrayList<Double> previousLayerScores = new ArrayList<Double>();
+		for(Neuron n : inputLayer){
+			previousLayerScores.add(n.getOutput());
+		}
+		for(int i = 0; i < hiddenLayers.size();i++){
+			for(int j = 0; j < hiddenLayers.get(i).size(); j++){
+				double neuronScore = hiddenLayers.get(i).get(j).getNeuronBias();
+				for(int k = 0; k < previousLayerScores.size(); k++){
+					neuronScore+=previousLayerScores.get(k)*hiddenLayers.get(i).get(j).getSingleWeight(k);
+				}
+				hiddenLayers.get(i).get(j).overrideOutput(neuronScore);
+			}
+			previousLayerScores.clear();
+			for(Neuron n : hiddenLayers.get(i)){
+				previousLayerScores.add(n.getOutput());
+			}
+		}
+		for(int i = 0; i < outputLayer.size();i++){
+			double neuronScore = outputLayer.get(i).getNeuronBias();
+			for(int j = 0; j < previousLayerScores.size(); j++){
+				neuronScore+=previousLayerScores.get(j)*outputLayer.get(i).getSingleWeight(j);
+			}
+			outputLayer.get(i).overrideOutput(neuronScore);
 		}
 	}
 	/**
@@ -137,8 +164,9 @@ public class NeuralNetwork {
 			System.out.println("[d] Override completed");
 		}
 	}
-	public void computeOutput(){
-		for(Neuron hiddenNeuron : hiddenLayers.get(0)){
+	@Deprecated
+	public void computeOutputV1(){
+		/*for(Neuron hiddenNeuron : hiddenLayers.get(0)){
 			double[] inputLayerOutputs = new double[inputLayer.size()];
 			for(int i = 0; i<inputLayer.size();i++){
 				inputLayerOutputs[i]=inputLayer.get(i).getOutput();
@@ -166,7 +194,7 @@ public class NeuralNetwork {
 			}
 			outputNeuron.readFromInputs(previousLayerOutputs);
 			outputNeuron.computeOutput();
-		}
+		}*/
 	}
 	public ArrayList<Neuron> getOutputLayer(){
 		return this.outputLayer;

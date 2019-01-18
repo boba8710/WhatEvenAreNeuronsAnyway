@@ -1,7 +1,7 @@
 import java.util.Random;
 import java.lang.Math;
 public class Neuron {
-	private double[] inputs; //Storing inputs in each neuron is just not supportable. Way too much memory used. Needs to get needed
+	//private double[] inputs; //Storing inputs in each neuron is just not supportable. Way too much memory used. Needs to get needed
 							 //input values at runtime. THIS MUST BE FIXED.
 	private double[] weights;
 	private boolean outputComputedForSettings = false;
@@ -13,9 +13,11 @@ public class Neuron {
 			Globals.neuronCount++;
 			System.out.println("[d] Neuron count: "+Globals.neuronCount);
 		}
-		this.inputs  = new double[inputCount];
 		this.weights = new double[inputCount];
 		this.neuronBias = neuronBias;
+	}
+	public double getNeuronBias() {
+		return neuronBias;
 	}
 	public Neuron(double neuronBias){
 		if(Globals.DEBUG){
@@ -29,22 +31,7 @@ public class Neuron {
 		if(Globals.DEBUG){
 			System.out.println("[d] Input count set");
 		}
-		this.inputs  = new double[inputCount];
 		this.weights = new double[inputCount];
-	}
-	//This can be safely multithreaded as inputs from the previous layer don't change
-	public void computeOutput(){
-		if(Globals.DEBUG){
-			System.out.println("[d] Computing neuron output");
-		}
-		output = neuronBias;
-		for(int i = 0; i < inputs.length; i++){
-			output+=inputs[i]*weights[i];
-		}
-		this.outputComputedForSettings=true;
-		if(Globals.DEBUG){
-			System.out.println("[d] Output computation completed");
-		}
 	}
 	/**
 	 * Sets the output for this neuron
@@ -95,13 +82,7 @@ public class Neuron {
 	public boolean hasOutputBeenComputed() {
 		return outputComputedForSettings;
 	}
-	public void readFromInputs(double[] inputs){
-		assert(this.inputs.length == inputs.length);
-		for(int i = 0; i < inputs.length; i++){
-			this.inputs[i]=inputs[i];
-		}
-	}
-	public int getInputCount(){
-		return inputs.length;
+	public int getWeightCount(){
+		return weights.length;
 	}
 }
