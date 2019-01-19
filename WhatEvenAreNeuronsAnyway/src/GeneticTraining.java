@@ -21,22 +21,22 @@ public class GeneticTraining {
 		this.hiddenLayerCount = hiddenLayerCount;
 		this.neuronsPerHiddenLayer = neuronsPerHiddenLayer;
 		this.population = new NeuralNetwork[populationSize];
-		for(NeuralNetwork nN : population){
-			nN = new NeuralNetwork(inputCount, outputCount);
-			for(int i=0; i < hiddenLayerCount;i++){
+		for(int i = 0; i < populationSize; i++){
+			population[i] = new NeuralNetwork(inputCount, outputCount);
+			for(int j=0; j < hiddenLayerCount;j++){
 				try {
-					nN.addHiddenLayer(neuronsPerHiddenLayer);
+					population[i].addHiddenLayer(neuronsPerHiddenLayer);
 				} catch (InputWebException e) {
 					e.printStackTrace();
 				}
 			}
 			try {
-				nN.createInputWeb();
+				population[i].createInputWeb();
 			} catch (InputWebException e) {
 				e.printStackTrace();
 			}
-			nN.randomizeAllHiddenLayerBiases();
-			nN.randomizeAllHiddenLayerWeights();
+			population[i].randomizeAllHiddenLayerBiases();
+			population[i].randomizeAllHiddenLayerWeights();
 		}
 	}
 	/**

@@ -58,8 +58,8 @@ public class NeuralNetwork {
 		//Set the number of inputs for the output layer neurons to the number of neurons in the last hidden layer
 		for(Neuron n : outputLayer){
 			n.setInputCount(hiddenLayers.get(hiddenLayers.size()-1).size()); 
-			for(double weight : n.getWeights()){
-				weight = 1;
+			for(int i = 0; i < n.getWeightCount(); i++){
+				n.getWeights()[i] = 1;
 			}
 		}
 		if(Globals.DEBUG){
@@ -90,12 +90,13 @@ public class NeuralNetwork {
 			System.out.println("[d] Hidden layer added");
 		}
 	}
-	public void computeOutput(){
+	public void computeOutput(){ //MUST be multithreaded for use in networks of any useful size
 		ArrayList<Double> previousLayerScores = new ArrayList<Double>();
 		for(Neuron n : inputLayer){
 			previousLayerScores.add(n.getOutput());
 		}
 		for(int i = 0; i < hiddenLayers.size();i++){
+			ArrayList<Neuron> hiddenLayer = hiddenLayers.get(i);
 			for(int j = 0; j < hiddenLayers.get(i).size(); j++){
 				double neuronScore = hiddenLayers.get(i).get(j).getNeuronBias();
 				for(int k = 0; k < previousLayerScores.size(); k++){
