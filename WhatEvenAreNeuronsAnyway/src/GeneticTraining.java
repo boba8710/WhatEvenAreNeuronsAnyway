@@ -10,6 +10,9 @@ public class GeneticTraining {
 	private int hiddenLayerCount; 
 	private int neuronsPerHiddenLayer;
 	private NeuralNetwork[] population;
+	
+	private static boolean CROSSBREEDING_FINE_GRANULARITY = false;
+	
 	public GeneticTraining(int populationSize, double mutationChance, double populationDieOffPercent, int preserveTopNIndividuals, int inputCount, int outputCount ,int hiddenLayerCount, int neuronsPerHiddenLayer){
 		this.mutationChance = mutationChance;
 		this.populationDieOffPercent=populationDieOffPercent;
@@ -125,7 +128,7 @@ public class GeneticTraining {
 		NeuralNetwork childNetwork = individualA;
 		
 		Random r = new Random();
-		if(Globals.CROSSBREEDING_FINE_GRANULARITY){//Fine Granularity, crossbreeds weights
+		if(CROSSBREEDING_FINE_GRANULARITY){//Fine Granularity, crossbreeds weights
 			for(int i = 0; i< hiddenLayersA.size(); i++){//layers
 				for(int j = 0; j<hiddenLayersA.get(0).size();j++){//neurons
 					Neuron childNeuron = hiddenLayersA.get(i).get(j);

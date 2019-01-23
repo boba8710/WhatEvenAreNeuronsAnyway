@@ -7,11 +7,12 @@ public class Neuron {
 	private boolean outputComputedForSettings = false;
 	private double output;
 	private double neuronBias;
+	
+	private boolean DEBUG = false;
+	
 	public Neuron(int inputCount, double neuronBias){
-		if(Globals.DEBUG){
+		if(DEBUG){
 			System.out.println("[d] Initialized a full neuron");
-			Globals.neuronCount++;
-			System.out.println("[d] Neuron count: "+Globals.neuronCount);
 		}
 		this.weights = new double[inputCount];
 		this.neuronBias = neuronBias;
@@ -20,15 +21,13 @@ public class Neuron {
 		return neuronBias;
 	}
 	public Neuron(double neuronBias){
-		if(Globals.DEBUG){
+		if(DEBUG){
 			System.out.println("[d] Initialized an empty neuron");
-			Globals.neuronCount++;
-			System.out.println("[d] Neuron count: "+Globals.neuronCount);
 		}
 		this.neuronBias = neuronBias;
 	}
 	public void setInputCount(int inputCount){
-		if(Globals.DEBUG){
+		if(DEBUG){
 			System.out.println("[d] Input count set");
 		}
 		this.weights = new double[inputCount];

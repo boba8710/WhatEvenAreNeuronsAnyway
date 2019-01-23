@@ -49,6 +49,8 @@ public class GradientDescent {
 		averageScore=averageScore/inputs.length;
 		return averageScore;
 	}
+	
+	//Next on the paralellization chopping block
 	public NeuralNetwork trainNetwork(double[][] inputs, double[][] outputs, int iterations){
 		System.out.println("Starting network training");
 		assert inputs.length==outputs.length;
