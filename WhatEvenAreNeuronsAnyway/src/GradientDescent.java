@@ -37,11 +37,11 @@ public class GradientDescent {
 		score=1/score;
 		return score;
 	}
+	private int totalScored = 0;
 	private double computeScoreForInputs(double[][] inputs, double[][] outputs){
 		System.out.println("Scoring input set");
 		double averageScore = 0;
 		for(int j = 0; j < inputs.length; j++){
-			System.out.println("Input "+j+" scored");
 			internalNetwork.initializeInputLayer(inputs[j]);
 			internalNetwork.computeOutput();
 			double[] networkOutput = new double[internalNetwork.getOutputLayer().size()];
@@ -51,7 +51,9 @@ public class GradientDescent {
 			
 			double score = computeScore(networkOutput, outputs[j]);
 			averageScore+=score;
+			totalScored+=1;
 		}
+		System.out.println("Scored inputs: "+totalScored);
 		averageScore=averageScore/inputs.length;
 		return averageScore;
 	}
@@ -88,7 +90,7 @@ public class GradientDescent {
 				e1.printStackTrace();
 			}
 			double baselineScore=computeScoreForInputs(inputs,outputs);//baseline score must be computed once per iteration
-			for(ArrayList<Neuron> hiddenLayer : networkCopy.getHiddenLayers()){
+			for(ArrayList<Neuron> hiddenLayer : networkCopy.getHiddenLayers()){ //Layers should not be multithreaded due to relying on prior layers for output
 				final ExecutorService executor = Executors.newCachedThreadPool();
 				final List<Future<?>> futures = new ArrayList<>();
 				for(Neuron neuron:hiddenLayer) {
