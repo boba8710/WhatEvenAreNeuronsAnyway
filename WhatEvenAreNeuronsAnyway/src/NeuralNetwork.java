@@ -240,4 +240,31 @@ public class NeuralNetwork {
 	public void setNeuron(int hiddenLayerIndex, int neuronIndex, Neuron neuron){
 		 hiddenLayers.get(hiddenLayerIndex).set(neuronIndex, neuron);
 	}
+	public NeuralNetwork deepCopy() throws InputWebException{
+		NeuralNetwork clonedNetwork = new NeuralNetwork(this.inputLayer.size(), this.outputLayer.size());
+		for(int i = 0; i < this.hiddenLayers.size(); i++){
+			clonedNetwork.addHiddenLayer(this.hiddenLayers.get(i).size());
+		}
+		clonedNetwork.createInputWeb();
+		for(int i = 0; i < this.hiddenLayers.size(); i++){
+			for(int j = 0; j < this.hiddenLayers.get(i).size(); j++){
+				clonedNetwork.hiddenLayers.get(i).get(j).setBias(this.hiddenLayers.get(i).get(j).getNeuronBias());
+				for(int k = 0; k < this.hiddenLayers.get(i).get(j).getWeightCount(); k++){
+					clonedNetwork.hiddenLayers.get(i).get(j).setSingleWeight(k, this.hiddenLayers.get(i).get(j).getSingleWeight(k));
+				}
+			}
+		}
+		return clonedNetwork;
+	}
+	public void copyFromNetwork(NeuralNetwork input){
+		assert input.hiddenLayers.size() == this.hiddenLayers.size();
+		for(int i = 0; i < input.hiddenLayers.size(); i++){
+			for(int j = 0; j < input.hiddenLayers.get(i).size(); j++){
+				this.hiddenLayers.get(i).get(j).setBias(input.hiddenLayers.get(i).get(j).getNeuronBias());
+				for(int k = 0; k < input.hiddenLayers.get(i).get(j).getWeightCount(); i++){
+					this.hiddenLayers.get(i).get(j).setSingleWeight(k, input.hiddenLayers.get(i).get(j).getSingleWeight(k));
+				}
+			}
+		}
+	}
 }

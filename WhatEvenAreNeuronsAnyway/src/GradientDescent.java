@@ -1,6 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class GradientDescent {
 	NeuralNetwork internalNetwork;
+	NeuralNetwork newNetwork;
 	double epsilon;
 	public GradientDescent(int inputLayerSize, int outputLayerSize, int hiddenLayerCount, int neuronsPerHiddenLayer, double epsilon){
 		this.internalNetwork = new NeuralNetwork(inputLayerSize, outputLayerSize);
@@ -50,37 +56,57 @@ public class GradientDescent {
 		return averageScore;
 	}
 	
+	
+	private void tweakWeights(double[][] inputs, double[][] outputs, Neuron neuron, double baselineScore){
+		for(int i = 0; i < neuron.getWeightCount(); i++){
+			double startingWeight = neuron.getSingleWeight(i);
+			neuron.setSingleWeight(i, startingWeight+this.epsilon);
+			double newScore = computeScoreForInputs(inputs,outputs);
+			if(newScore > baselineScore){
+				baselineScore = newScore;
+			}else{
+				neuron.setSingleWeight(i, startingWeight-this.epsilon);
+				newScore = computeScoreForInputs(inputs,outputs);
+				if((newScore > baselineScore)){
+					baselineScore = newScore;
+				}else{
+					neuron.setSingleWeight(i, startingWeight);
+				}
+			}
+		}
+	}
 	//Next on the paralellization chopping block
 	public NeuralNetwork trainNetwork(double[][] inputs, double[][] outputs, int iterations){
 		System.out.println("Starting network training");
 		assert inputs.length==outputs.length;
-		for(int i = 0; i < iterations; i++){
-			double baselineScore=computeScoreForInputs(inputs,outputs);
-			System.out.println("Baseline score computed for iteration "+i);
-			for(int j = 0; j < internalNetwork.getHiddenLayers().size(); j++){
-				System.out.println("Training hidden layer "+j);
-				for(int k = 0; k < internalNetwork.getHiddenLayers().get(j).size();k++){
-					for(int l = 0; l < internalNetwork.getHiddenLayers().get(j).get(k).getWeights().length; l++){
-						double startingWeight = internalNetwork.getHiddenLayers().get(j).get(k).getWeights()[l];
-						internalNetwork.getHiddenLayers().get(j).get(k).setSingleWeight(l, startingWeight+this.epsilon);
-						double newScore = computeScoreForInputs(inputs,outputs);
-						if(newScore > baselineScore){
-							baselineScore = newScore;
-						}else{
-							internalNetwork.getHiddenLayers().get(j).get(k).setSingleWeight(l, startingWeight-this.epsilon);
-							newScore = computeScoreForInputs(inputs,outputs);
-							if((newScore > baselineScore)){
-								baselineScore = newScore;
-							}else{
-								internalNetwork.getHiddenLayers().get(j).get(k).setSingleWeight(l, startingWeight);
-							}
-						}
-						
+		for(int i = 0; i < iterations; i++){//iterations cannot be multithreaded
+			NeuralNetwork networkCopy = null;
+			try {
+				networkCopy = internalNetwork.deepCopy();
+			} catch (InputWebException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			double baselineScore=computeScoreForInputs(inputs,outputs);//baseline score must be computed once per iteration
+			for(ArrayList<Neuron> hiddenLayer : networkCopy.getHiddenLayers()){
+				final ExecutorService executor = Executors.newCachedThreadPool();
+				final List<Future<?>> futures = new ArrayList<>();
+				for(Neuron neuron:hiddenLayer) {
+					Future<?> future = executor.submit(() -> {
+						tweakWeights(inputs, outputs, neuron, baselineScore);
+					});
+					futures.add(future);
+				}
+				try {
+					for (Future<?> future : futures) {
+						future.get();
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
+			this.internalNetwork.copyFromNetwork(networkCopy);
 		}
-		
 		return internalNetwork;
 	}
 }

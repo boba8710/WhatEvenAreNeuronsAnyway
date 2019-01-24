@@ -1,8 +1,4 @@
-import java.util.Random;
-
 import javax.imageio.ImageIO;
-
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +9,8 @@ public class MainClass {
 		int imageHeight = 720;
 		int entryNeurons = imageWidth*imageHeight;
 		int exitNeurons  = imageWidth*imageHeight;
-		int totalHiddenLayers = 6;
-		int neuronsPerHiddenLayer = 100;
+		int totalHiddenLayers = 3;
+		int neuronsPerHiddenLayer = 50;
 		int annotatedDatasetSize = 75;
 		double[][] scoringInput = new double[annotatedDatasetSize][entryNeurons];
 		double[][] scoringOutput = new double[annotatedDatasetSize][exitNeurons];
